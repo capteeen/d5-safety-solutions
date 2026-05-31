@@ -1,6 +1,8 @@
 {
   "name": "d5-safety-solutions",
   "version": 2,
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": ".",
   "public": true,
   "cleanUrls": true,
   "trailingSlash": false,
