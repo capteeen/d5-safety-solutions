@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D5 Safety Solutions — Food Safety Compliance Platform</title>
+  <meta name="description" content="Complete food safety compliance platform. Digitise your HACCP, audits, training, and monitoring in one powerful system. Trusted by 500+ businesses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --d5-dark:     #1a2d3a;
+      --d5-slate:    #2d4a5f;
+      --d5-mid:      #4a6b80;
+      --d5-silver:   #8fa5b3;
+      --d5-light:    #c2cdd6;
+      --d5-pale:     #e8eef2;
+      --d5-white:    #ffffff;
+      --d5-accent:   #5b8fa8;
+      --d5-glow:     rgba(91,143,168,.35);
+      --d5-line:     rgba(143,165,179,.18);
+      --font-head:   'Syne', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+      --ease-smooth: cubic-bezier(.22,.68,0,1.2);
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--d5-white);
+      color: var(--d5-dark);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: .4;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--d5-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--d5-mid); border-radius: 3px; }
+
+    /* ─── UTILITY ─── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .72rem; font-weight: 600; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--d5-accent);
+      margin-bottom: 1rem;
+    }
+    .section-label::before {
+      content: ''; display: block;
+      width: 20px; height: 1.5px;
+      background: var(--d5-accent);
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; line-height: 1.1;
+      color: var(--d5-dark);
+    }
+    .section-title em { font-style: normal; color: var(--d5-slate); }
+    .section-subtitle {
+      font-size: 1.05rem; line-height: 1.7;
+      color: #4a5f6e; max-width: 52ch;
+      margin-top: .75rem;
+    }
+
+    /* ─── FADE-IN ANIMATION ─── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .7s ease, transform .7s var(--ease-smooth);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+    .reveal-delay-5 { transition-delay: .5s; }
+
+    /* ══════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.4rem 0;
+      transition: background .4s ease, padding .4s ease, box-shadow .4s ease;
+    }
+    nav.scrolled {
+      background: rgba(26,45,58,.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 1rem 0;
+      box-shadow: 0 1px 0 var(--d5-line), 0 8px 32px rgba(0,0,0,.25);
+    }
+    .nav-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .7rem;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .nav-logo svg { width: 36px; height: 36px; flex-shrink: 0; }
+    .nav-logo-text {
+      font-family: var(--font-head);
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--d5-white); line-height: 1.2;
+      letter-spacing: -.01em;
+    }
+    .nav-logo-text span { display: block; font-size: .7rem; font-weight: 400; color: var(--d5-silver); letter-spacing: .04em; }
+    .nav-links {
+      display: flex; align-items: center; gap: .25rem;
+      list-style: none; flex: 1; justify-content: center;
+    }
+    .nav-links a {
+      display: block; padding: .45rem .9rem;
+      font-size: .875rem; font-weight: 500;
+      color: rgba(255,255,255,.78);
+      text-decoration: none; border-radius: 6px;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--d5-white); background: rgba(255,255,255,.08); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .6rem 1.25rem;
+      background: var(--d5-accent); color: var(--d5-white);
+      font-size: .875rem; font-weight: 600;
+      border: none; border-radius: 8px;
+      cursor: pointer; text-decoration: none;
+      transition: transform .2s, box-shadow .2s, background .2s;
+      white-space: nowrap;
+    }
+    .nav-cta:hover {
+      background: #4a7d96; transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(91,143,168,.45);
+    }
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--d5-white); border-radius: 2px;
+      transition: transform .3s, opacity .3s;
+    }
+    .mobile-menu {
+      display: none; position: fixed; top: 0; right: -100%;
+      width: min(320px, 100vw); height: 100vh;
+      background: var(--d5-dark); z-index: 200;
+      padding: 5rem 2rem 2rem;
+      transition: right .35s var(--ease-smooth);
+      flex-direction: column; gap: 1rem;
+    }
+    .mobile-menu.open { right: 0; display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-head); font-size: 1.3rem; font-weight: 700;
+      color: var(--d5-white); text-decoration: none; padding: .75rem 0;
+      border-bottom: 1px solid var(--d5-line);
+      transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--d5-accent); }
+    .mobile-menu-close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: none; border: none; color: var(--d5-silver);
+      font-size: 1.5rem; cursor: pointer;
+    }
+    .mobile-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.6); z-index: 190;
+    }
+    .mobile-overlay.open { display: block; }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero {
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      background: linear-gradient(135deg, #0d1f2b 0%, #1a2d3a 40%, #2d4a5f 100%);
+      padding: 8rem 0 5rem;
+    }
+
+    /* background chef/kitchen photo */
+    .hero-photo {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: url('images/hero-wide.jpg');
+      background-size: cover; background-position: center;
+      opacity: .22;
+      filter: saturate(.85);
+    }
+    /* gradient overlay to keep text legible + brand tone */
+    .hero-photo::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(105deg, #0d1f2b 18%, rgba(26,45,58,.82) 48%, rgba(45,74,95,.35) 100%),
+        linear-gradient(0deg, #0d1f2b 0%, transparent 35%);
+    }
+
+    /* dot grid */
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 0;
+      background-image: radial-gradient(circle, rgba(143,165,179,.2) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(ellipse at 60% 50%, black 30%, transparent 80%);
+    }
+
+    /* diagonal line accent */
+    .hero-line-accent {
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 55%; z-index: 1; pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-line-accent::before {
+      content: '';
+      position: absolute; top: -10%; right: -5%;
+      width: 100%; height: 120%;
+      background: linear-gradient(135deg, transparent 40%, rgba(74,107,128,.12) 40%, rgba(74,107,128,.06) 60%, transparent 60%);
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .6rem;
+      font-size: .75rem; font-weight: 600; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--d5-accent);
+      margin-bottom: 1.5rem; padding: .4rem .9rem;
+      border: 1px solid rgba(91,143,168,.3);
+      border-radius: 100px;
+      background: rgba(91,143,168,.08);
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--d5-accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.7); }
+    }
+
+    .hero h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+      font-weight: 800; line-height: 1.06;
+      color: var(--d5-white); letter-spacing: -.02em;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, #8fa5b3 0%, #c2cdd6 50%, #8fa5b3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem; line-height: 1.7; font-weight: 300;
+      color: rgba(194,205,214,.8); max-width: 46ch;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-ctas {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .85rem 1.75rem;
+      background: var(--d5-accent); color: var(--d5-white);
+      font-family: var(--font-body); font-size: .95rem; font-weight: 600;
+      border: none; border-radius: 10px; cursor: pointer;
+      text-decoration: none;
+      transition: transform .25s, box-shadow .25s, background .25s;
+      box-shadow: 0 4px 20px rgba(91,143,168,.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(91,143,168,.55);
+      background: #4a7d96;
+    }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .85rem 1.75rem;
+      background: transparent; color: var(--d5-white);
+      font-family: var(--font-body); font-size: .95rem; font-weight: 500;
+      border: 1.5px solid rgba(194,205,214,.35); border-radius: 10px;
+      cursor: pointer; text-decoration: none;
+      transition: transform .25s, border-color .25s, background .25s;
+    }
+    .btn-outline:hover {
+      transform: translateY(-2px);
+      border-color: rgba(194,205,214,.7);
+      background: rgba(255,255,255,.06);
+    }
+
+    .hero-badges {
+      display: flex; gap: .75rem; flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .35rem .85rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(194,205,214,.15);
+      border-radius: 6px;
+      font-size: .78rem; font-weight: 500;
+      color: rgba(194,205,214,.85);
+    }
+    .badge svg { width: 13px; height: 13px; color: var(--d5-accent); }
+
+    /* ─── DASHBOARD MOCKUP ─── */
+    .hero-visual {
+      position: relative; display: flex;
+      justify-content: center; align-items: center;
+    }
+    .dashboard-wrap {
+      position: relative;
+      width: 100%; max-width: 560px;
+      animation: float 7s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(-.5deg); }
+      50% { transform: translateY(-12px) rotate(-.5deg); }
+    }
+
+    /* ── App Shell ── */
+    .dash-app {
+      background: #0b1a24;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px; overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.05);
+    }
+    .dash-topbar {
+      background: #071219;
+      padding: .55rem 1rem;
+      display: flex; align-items: center; gap: .6rem;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .dash-topbar-brand {
+      font-family: var(--font-head); font-size: .72rem; font-weight: 700;
+      color: var(--d5-white); display: flex; align-items: center; gap: .4rem;
+    }
+    .dash-topbar-brand svg { width: 14px; height: 14px; color: var(--d5-accent); }
+    .dash-topbar-pill {
+      display: flex; align-items: center; gap: .3rem;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 100px; padding: .2rem .65rem;
+      font-size: .6rem; color: rgba(255,255,255,.75);
+    }
+    .dash-topbar-pill svg { width: 9px; height: 9px; opacity: .6; }
+    .dash-topbar-live {
+      margin-left: auto;
+      display: flex; align-items: center; gap: .3rem;
+      font-size: .58rem; font-weight: 600; color: #6fcf97;
+      background: rgba(111,207,151,.08); border: 1px solid rgba(111,207,151,.2);
+      border-radius: 100px; padding: .2rem .55rem;
+    }
+    .dash-topbar-live::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: #6fcf97; animation: pulse 1.5s infinite;
+    }
+
+    /* ── Module Cards Row ── */
+    .dash-cards-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: .5rem; padding: .65rem .65rem .4rem;
+    }
+    .dash-mod {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px; padding: .65rem;
+      display: flex; flex-direction: column;
+    }
+    .dash-mod-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .55rem;
+    }
+    .dash-mod-title {
+      font-size: .58rem; font-weight: 600; color: rgba(255,255,255,.55);
+      text-transform: uppercase; letter-spacing: .07em;
+    }
+    .dash-mod-header svg { width: 11px; height: 11px; color: rgba(255,255,255,.3); }
+
+    /* Checklists card */
+    .dash-count-row {
+      display: flex; justify-content: center; gap: 1.2rem;
+      margin-bottom: .55rem; flex: 1; align-items: center;
+    }
+    .dash-count-block { text-align: center; }
+    .dash-big-num {
+      font-family: var(--font-head); font-size: 2rem; font-weight: 800;
+      line-height: 1; display: block;
+    }
+    .dash-big-num.red { color: #eb5757; }
+    .dash-big-num.green { color: #6fcf97; }
+    .dash-count-label { font-size: .5rem; color: rgba(255,255,255,.4); margin-top: .15rem; }
+    .dash-mod-btns {
+      display: flex; gap: .3rem;
+    }
+    .dash-mod-btn {
+      flex: 1; background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08); border-radius: 5px;
+      padding: .25rem .2rem; font-size: .5rem; font-weight: 600;
+      color: rgba(255,255,255,.6); text-align: center; cursor: default;
+    }
+
+    /* Hygiene Rating card */
+    .dash-hygiene-box {
+      flex: 1; margin-bottom: .55rem;
+      background: rgba(26,58,26,.6); border: 1.5px solid rgba(111,207,151,.3);
+      border-radius: 8px; padding: .5rem;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .dash-hygiene-num {
+      font-family: var(--font-head); font-size: 2rem; font-weight: 800;
+      color: #6fcf97; line-height: 1;
+    }
+    .dash-hygiene-label {
+      font-size: .46rem; text-transform: uppercase; letter-spacing: .1em;
+      color: rgba(111,207,151,.7); margin-top: .1rem;
+    }
+    .dash-hygiene-stars { color: #6fcf97; font-size: .65rem; letter-spacing: .05em; }
+
+    /* Risk Assessment / Score ring card */
+    .dash-ring-wrap {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; margin-bottom: .4rem;
+    }
+    .dash-score-ring-sm {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: conic-gradient(#6fcf97 0% 95%, rgba(255,255,255,.07) 95% 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 16px rgba(111,207,151,.2);
+    }
+    .dash-score-ring-inner {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: #0b1a24;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .dash-ring-num { font-family: var(--font-head); font-size: .78rem; font-weight: 800; color: #fff; }
+    .dash-ring-lbl { font-size: .34rem; color: rgba(255,255,255,.4); }
+    .dash-ring-legend {
+      display: flex; justify-content: center; gap: .5rem; margin-bottom: .4rem;
+    }
+    .dash-leg {
+      display: flex; align-items: center; gap: .2rem;
+      font-size: .44rem; color: rgba(255,255,255,.45);
+    }
+    .dash-leg::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+    .dash-leg.g::before { background: #6fcf97; }
+    .dash-leg.a::before { background: #f2c94c; }
+    .dash-leg.r::before { background: #eb5757; }
+
+    /* ── Bottom strip: sites + today's checks ── */
+    .dash-bottom-strip {
+      padding: 0 .65rem .65rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: .5rem;
+    }
+    .dash-panel {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px; padding: .6rem;
+    }
+    .dash-panel-title {
+      font-size: .5rem; font-weight: 700; color: rgba(255,255,255,.45);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: .5rem;
+    }
+    .dash-sites-cols {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .4rem;
+    }
+    .dash-site-row {
+      display: flex; align-items: center; gap: .3rem; margin-bottom: .28rem;
+    }
+    .dash-site-rank {
+      width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-size: .42rem; font-weight: 800;
+    }
+    .dash-site-rank.g { background: #6fcf97; color: #0b1a24; }
+    .dash-site-rank.o { background: #f2994a; color: #fff; }
+    .dash-site-rank.r { background: #eb5757; color: #fff; }
+    .dash-site-name { font-size: .5rem; color: rgba(255,255,255,.65); flex: 1; min-width: 0; }
+    .dash-site-bar-wrap { width: 28px; height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+    .dash-site-bar { height: 100%; border-radius: 2px; }
+    .dash-site-pct { font-size: .44rem; color: rgba(255,255,255,.4); width: 20px; text-align: right; flex-shrink: 0; }
+    .dash-sites-divider {
+      width: 1px; background: rgba(255,255,255,.07); margin: 0 .1rem;
+    }
+
+    /* today's checks panel */
+    .dash-check-row {
+      display: flex; align-items: center; gap: .35rem; margin-bottom: .28rem;
+    }
+    .dash-ck-icon {
+      width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dash-ck-icon svg { width: 8px; height: 8px; }
+    .dash-ck-icon.ok { background: rgba(111,207,151,.18); color: #6fcf97; }
+    .dash-ck-icon.pending { background: rgba(242,201,76,.15); color: #f2c94c; }
+    .dash-ck-icon.warn { background: rgba(235,87,87,.12); color: #eb5757; }
+    .dash-ck-text { font-size: .5rem; color: rgba(255,255,255,.6); }
+
+    /* ── Floating Panels ── */
+    @keyframes floatCard1 {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes floatCard2 {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(8px); }
+    }
+    .dash-float-temp {
+      position: absolute; top: 8px; right: -148px;
+      width: 138px;
+      background: var(--d5-white); border-radius: 14px;
+      padding: .8rem .75rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,.25), 0 0 0 1px rgba(0,0,0,.06);
+      animation: floatCard2 8s ease-in-out infinite;
+    }
+    .dash-float-allergen {
+      position: absolute; bottom: 10px; left: -148px;
+      width: 142px;
+      background: var(--d5-white); border-radius: 14px;
+      padding: .8rem .75rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,.25), 0 0 0 1px rgba(0,0,0,.06);
+      animation: floatCard1 8s ease-in-out infinite;
+    }
+    .dash-float-title {
+      font-family: var(--font-head); font-size: .68rem; font-weight: 800;
+      color: var(--d5-dark); margin-bottom: .55rem;
+    }
+    .dash-temp-row {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .28rem .4rem; border-radius: 6px; margin-bottom: .22rem;
+    }
+    .dash-temp-row svg { width: 10px; height: 10px; flex-shrink: 0; }
+    .dash-temp-row .td { font-size: .56rem; color: #6a8090; flex: 1; }
+    .dash-temp-row .tv { font-size: .58rem; font-weight: 700; }
+    .dash-temp-row.ok { background: rgba(111,207,151,.07); border: 1px solid rgba(111,207,151,.18); }
+    .dash-temp-row.ok svg { color: #6fcf97; }
+    .dash-temp-row.ok .tv { color: var(--d5-dark); }
+    .dash-temp-row.hi { background: rgba(235,87,87,.07); border: 1px solid rgba(235,87,87,.2); }
+    .dash-temp-row.hi svg { color: #eb5757; }
+    .dash-temp-row.hi .tv { color: #eb5757; }
+    .dash-allergen-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .28rem .4rem; border-radius: 6px; margin-bottom: .22rem;
+    }
+    .dash-allergen-row.ok { background: rgba(111,207,151,.07); border: 1px solid rgba(111,207,151,.15); }
+    .dash-allergen-row.warn { background: rgba(235,87,87,.07); border: 1px solid rgba(235,87,87,.18); }
+    .dash-allergen-name { font-size: .56rem; color: var(--d5-dark); }
+    .dash-allergen-count {
+      width: 16px; height: 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-size: .52rem; font-weight: 800;
+    }
+    .dash-allergen-count.zero { background: rgba(111,207,151,.2); color: #27ae60; }
+    .dash-allergen-count.alert { background: rgba(235,87,87,.2); color: #eb5757; }
+
+    @media (max-width: 900px) {
+      .hero-content { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-visual { display: none; }
+    }
+
+    /* ══════════════════════════════════════
+       STATS BAR
+    ══════════════════════════════════════ */
+    .stats-bar {
+      background: var(--d5-slate);
+      position: relative; overflow: hidden;
+      padding: 3.5rem 0;
+    }
+    .stats-bar::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(143,165,179,.12) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .stats-bar::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px; background: linear-gradient(90deg, transparent, rgba(143,165,179,.4), transparent);
+    }
+    .stats-grid {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+    .stat-item {
+      text-align: center; padding: 1rem;
+    }
+    .stat-item + .stat-item {
+      border-left: 1px solid rgba(194,205,214,.12);
+    }
+    .stat-number {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 800; color: var(--d5-white);
+      line-height: 1; display: block;
+    }
+    .stat-suffix { color: var(--d5-accent); }
+    .stat-label {
+      font-size: .82rem; font-weight: 500;
+      color: var(--d5-silver); margin-top: .4rem;
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      .stat-item + .stat-item { border-left: none; }
+      .stat-item:nth-child(odd) { border-right: 1px solid rgba(194,205,214,.12); }
+    }
+
+    /* ── Decorative food SVG motifs ── */
+    .food-deco {
+      position: absolute; z-index: 0; pointer-events: none;
+      color: var(--d5-slate); opacity: .05;
+    }
+    .food-deco svg { width: 100%; height: 100%; display: block; }
+    .food-deco.spin-slow { animation: spinSlow 40s linear infinite; }
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+    /* ══════════════════════════════════════
+       SERVICES
+    ══════════════════════════════════════ */
+    /* ══════════════════════════════════════
+       SERVICES — Editorial List Design
+    ══════════════════════════════════════ */
+    .services {
+      padding: 7rem 0 5rem;
+      background: #fff;
+      position: relative; overflow: hidden;
+    }
+    .services .container { position: relative; z-index: 1; }
+
+    /* Big outlined watermark background text */
+    .services-watermark {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-head);
+      font-size: min(22vw, 280px); font-weight: 800;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(45,74,95,.045);
+      text-stroke: 1.5px rgba(45,74,95,.045);
+      white-space: nowrap; letter-spacing: -.04em;
+      pointer-events: none; z-index: 0;
+      user-select: none;
+    }
+    /* Subtle food deco positions */
+    .services .food-deco-1 { top: 2rem; right: -30px; width: 160px; height: 160px; opacity: .04; }
+    .services .food-deco-2 { bottom: 2rem; left: -40px; width: 140px; height: 140px; opacity: .035; }
+
+    /* Header: left title / right blurb */
+    .services-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: end; gap: 4rem;
+      margin-bottom: 4rem; padding-bottom: 4rem;
+      border-bottom: 1px solid rgba(45,74,95,.1);
+    }
+    .services-header-blurb {
+      font-size: 1rem; line-height: 1.75; color: #5a6e7a;
+    }
+    .services-header-count {
+      display: inline-flex; align-items: center; gap: .5rem;
+      margin-top: 1.25rem;
+      font-size: .78rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--d5-accent);
+    }
+    .services-header-count::before {
+      content: ''; display: block;
+      width: 18px; height: 1.5px; background: var(--d5-accent);
+    }
+
+    /* ── Editorial service list ── */
+    .services-list { position: relative; z-index: 1; }
+
+    .si {
+      display: grid;
+      grid-template-columns: 3.5rem 3.5rem 1fr 1fr 3rem;
+      align-items: center;
+      gap: 2rem;
+      padding: 1.6rem 1.5rem;
+      margin: 0 -1.5rem;
+      border-top: 1px solid rgba(45,74,95,.09);
+      cursor: pointer; text-decoration: none;
+      position: relative; border-radius: 4px;
+      transition: padding .35s var(--ease-smooth);
+    }
+    .si:last-child { border-bottom: 1px solid rgba(45,74,95,.09); }
+
+    /* dark sweep fill */
+    .si::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: 14px;
+      background: var(--d5-dark);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .45s cubic-bezier(.22,.68,0,1.05);
+      z-index: -1;
+    }
+    .si:hover { padding-left: 2.5rem; padding-right: 2.5rem; }
+    .si:hover::before { transform: scaleX(1); }
+
+    /* Number */
+    .si-num {
+      font-family: var(--font-head); font-size: .8rem; font-weight: 700;
+      color: rgba(45,74,95,.28); letter-spacing: .04em;
+      transition: color .3s;
+    }
+    .si:hover .si-num { color: rgba(255,255,255,.3); }
+
+    /* Icon pill */
+    .si-icon {
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      background: rgba(45,74,95,.07);
+      border: 1px solid rgba(45,74,95,.12);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .35s, border-color .35s, transform .35s var(--ease-smooth);
+    }
+    .si-icon svg { width: 20px; height: 20px; color: var(--d5-slate); transition: color .3s; }
+    .si:hover .si-icon {
+      background: rgba(91,143,168,.22); border-color: rgba(91,143,168,.45);
+      transform: rotate(-8deg) scale(1.08);
+    }
+    .si:hover .si-icon svg { color: var(--d5-accent); }
+
+    /* Title */
+    .si-title {
+      font-family: var(--font-head);
+      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+      font-weight: 800; letter-spacing: -.02em;
+      color: var(--d5-dark); line-height: 1.2;
+      transition: color .3s;
+    }
+    .si:hover .si-title { color: #fff; }
+
+    /* Description */
+    .si-desc {
+      font-size: .875rem; line-height: 1.65; color: #6a808e;
+      transition: color .3s;
+    }
+    .si:hover .si-desc { color: rgba(194,205,214,.85); }
+
+    /* Arrow circle */
+    .si-arrow {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      border: 1.5px solid rgba(45,74,95,.18);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .3s, border-color .3s, transform .4s var(--ease-smooth);
+      justify-self: end;
+    }
+    .si-arrow svg { width: 15px; height: 15px; color: var(--d5-slate); transition: color .3s, transform .3s; }
+    .si:hover .si-arrow {
+      background: var(--d5-accent); border-color: transparent;
+      transform: rotate(45deg);
+    }
+    .si:hover .si-arrow svg { color: #fff; transform: rotate(-45deg); }
+
+    @media (max-width: 900px) {
+      .services-header { grid-template-columns: 1fr; gap: 1.5rem; }
+      .si { grid-template-columns: 2.5rem 3rem 1fr 3rem; }
+      .si-desc { display: none; }
+    }
+    @media (max-width: 600px) {
+      .si { grid-template-columns: 2rem 2.5rem 1fr 2.5rem; gap: 1rem; padding: 1.2rem .75rem; margin: 0 -.75rem; }
+      .si:hover { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .si-title { font-size: 1rem; }
+    }
+
+    /* ══════════════════════════════════════
+       APP PLATFORM
+    ══════════════════════════════════════ */
+    .platform {
+      padding: 7rem 0;
+      background: var(--d5-white);
+      overflow: hidden;
+    }
+    .platform-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center;
+    }
+    .platform-features {
+      display: flex; flex-direction: column; gap: .85rem;
+      margin-top: 2rem;
+    }
+    .platform-feature {
+      display: flex; align-items: flex-start; gap: .9rem;
+    }
+    .feature-check {
+      width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--d5-slate), var(--d5-accent));
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .feature-check svg { width: 12px; height: 12px; color: white; }
+    .feature-text strong {
+      display: block; font-size: .92rem; font-weight: 600; color: var(--d5-dark);
+    }
+    .feature-text span { font-size: .83rem; color: #5a6e7a; line-height: 1.5; }
+
+    /* ── Rich Phone Mockup ── */
+    .phone-mockup {
+      position: relative; width: 100%; display: flex;
+      justify-content: center; align-items: center;
+    }
+    .phone-outer {
+      width: 268px; height: 560px;
+      background: #0d1e2a;
+      border-radius: 40px;
+      border: 2px solid rgba(143,165,179,.22);
+      padding: 10px;
+      box-shadow: 0 50px 140px rgba(26,45,58,.5), 0 0 0 1px rgba(255,255,255,.05),
+                  inset 0 1px 0 rgba(255,255,255,.08);
+      position: relative;
+      animation: phoneFloat 6s ease-in-out infinite;
+    }
+    @keyframes phoneFloat {
+      0%,100% { transform: translateY(0px) rotate(.5deg); }
+      50% { transform: translateY(-10px) rotate(.5deg); }
+    }
+    .phone-notch {
+      width: 72px; height: 7px; background: #1a2d3a;
+      border-radius: 4px; margin: 0 auto 8px;
+    }
+    .phone-screen {
+      background: #0a1720; border-radius: 32px;
+      height: calc(100% - 17px); overflow: hidden;
+    }
+
+    /* App header bar */
+    .papp-topbar {
+      background: #071219;
+      padding: .55rem .8rem;
+      display: flex; align-items: center; gap: .5rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .papp-shield {
+      width: 18px; height: 18px; flex-shrink: 0;
+    }
+    .papp-brand {
+      font-family: var(--font-head); font-size: .62rem; font-weight: 700;
+      color: var(--d5-white); flex: 1;
+    }
+    .papp-bell {
+      position: relative; width: 20px; height: 20px;
+      background: rgba(255,255,255,.08); border-radius: 5px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .papp-bell svg { width: 11px; height: 11px; color: var(--d5-silver); }
+    .papp-bell-badge {
+      position: absolute; top: -3px; right: -3px;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #eb5757; border: 1.5px solid #071219;
+      font-size: .3rem; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Greeting strip */
+    .papp-greeting {
+      padding: .55rem .8rem .3rem;
+    }
+    .papp-greeting-name {
+      font-family: var(--font-head); font-size: .62rem; font-weight: 700;
+      color: var(--d5-white); margin-bottom: .15rem;
+    }
+    .papp-greeting-sub {
+      display: flex; align-items: center; gap: .3rem;
+      font-size: .5rem; color: rgba(255,255,255,.4);
+    }
+    .papp-online-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #6fcf97; animation: pulse 2s infinite;
+    }
+
+    /* Score + quick stats */
+    .papp-score-area {
+      padding: .4rem .8rem .5rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .papp-ring {
+      width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+      background: conic-gradient(var(--d5-accent) 0% 98%, rgba(255,255,255,.07) 98% 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 18px rgba(91,143,168,.3);
+    }
+    .papp-ring-inner {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: #0a1720;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .papp-ring-num { font-family: var(--font-head); font-size: .85rem; font-weight: 800; color: #fff; }
+    .papp-ring-lbl { font-size: .32rem; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .06em; }
+    .papp-quick-stats { flex: 1; display: flex; flex-direction: column; gap: .3rem; }
+    .papp-stat-pill {
+      display: flex; align-items: center; gap: .35rem;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 6px; padding: .25rem .45rem;
+    }
+    .papp-stat-pill svg { width: 9px; height: 9px; flex-shrink: 0; }
+    .papp-stat-val { font-family: var(--font-head); font-size: .6rem; font-weight: 700; color: #fff; }
+    .papp-stat-lbl { font-size: .48rem; color: rgba(255,255,255,.4); flex: 1; }
+    .papp-stat-pill.ok svg { color: #6fcf97; }
+    .papp-stat-pill.warn svg { color: #f2c94c; }
+    .papp-stat-pill.alert svg { color: #eb5757; }
+
+    /* Section headers */
+    .papp-section {
+      padding: 0 .8rem .3rem;
+    }
+    .papp-section-title {
+      font-size: .45rem; font-weight: 700; color: rgba(255,255,255,.35);
+      text-transform: uppercase; letter-spacing: .1em; margin-bottom: .35rem;
+    }
+
+    /* Priority check rows */
+    .papp-check-list { display: flex; flex-direction: column; gap: .25rem; }
+    .papp-check-row {
+      display: flex; align-items: center; gap: .4rem;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 7px; padding: .32rem .5rem;
+    }
+    .papp-ck-icon {
+      width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .papp-ck-icon svg { width: 8px; height: 8px; }
+    .papp-ck-icon.ok { background: rgba(111,207,151,.18); color: #6fcf97; }
+    .papp-ck-icon.due { background: rgba(242,201,76,.15); color: #f2c94c; }
+    .papp-ck-icon.over { background: rgba(235,87,87,.12); color: #eb5757; }
+    .papp-ck-text { font-size: .52rem; color: rgba(255,255,255,.7); flex: 1; }
+    .papp-ck-time {
+      font-size: .45rem; color: rgba(255,255,255,.3);
+      background: rgba(255,255,255,.05); border-radius: 3px;
+      padding: .1rem .3rem;
+    }
+    .papp-ck-badge {
+      font-size: .44rem; font-weight: 700; border-radius: 3px; padding: .12rem .35rem;
+    }
+    .papp-ck-badge.due { background: rgba(242,201,76,.18); color: #f2c94c; }
+    .papp-ck-badge.over { background: rgba(235,87,87,.15); color: #eb5757; }
+
+    /* Temperature log bars */
+    .papp-temp-list { display: flex; flex-direction: column; gap: .25rem; }
+    .papp-temp-row {
+      display: flex; align-items: center; gap: .4rem;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 7px; padding: .28rem .5rem;
+    }
+    .papp-temp-label { font-size: .5rem; color: rgba(255,255,255,.55); width: 46px; flex-shrink: 0; }
+    .papp-temp-bar-wrap { flex: 1; height: 4px; background: rgba(255,255,255,.07); border-radius: 2px; overflow: hidden; }
+    .papp-temp-bar { height: 100%; border-radius: 2px; }
+    .papp-temp-val { font-size: .52rem; font-weight: 700; width: 30px; text-align: right; flex-shrink: 0; }
+    .papp-temp-ok { color: #6fcf97; }
+    .papp-temp-row svg { width: 9px; height: 9px; flex-shrink: 0; }
+
+    /* Floating alert card outside phone */
+    .phone-float-alert {
+      position: absolute; top: 20px; right: -130px;
+      width: 120px;
+      background: #fff; border-radius: 12px; padding: .65rem .7rem;
+      box-shadow: 0 10px 36px rgba(0,0,0,.2);
+      animation: phoneFloat 8s ease-in-out infinite;
+      animation-delay: -4s;
+    }
+    .pfa-header {
+      display: flex; align-items: center; gap: .35rem; margin-bottom: .45rem;
+    }
+    .pfa-dot { width: 7px; height: 7px; border-radius: 50%; background: #eb5757; flex-shrink: 0; animation: pulse 1.5s infinite; }
+    .pfa-title { font-family: var(--font-head); font-size: .6rem; font-weight: 800; color: var(--d5-dark); }
+    .pfa-body { font-size: .52rem; color: #4a5f6e; line-height: 1.5; margin-bottom: .4rem; }
+    .pfa-btn {
+      display: block; text-align: center;
+      background: #eb5757; color: #fff;
+      font-size: .5rem; font-weight: 700;
+      border-radius: 5px; padding: .25rem;
+    }
+
+    /* Floating passed card outside phone bottom left */
+    .phone-float-pass {
+      position: absolute; bottom: 30px; left: -120px;
+      width: 112px;
+      background: #fff; border-radius: 12px; padding: .65rem .7rem;
+      box-shadow: 0 10px 36px rgba(0,0,0,.2);
+      animation: phoneFloat 7s ease-in-out infinite;
+      animation-delay: -2s;
+    }
+    .pfp-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(111,207,151,.12); border: 1px solid rgba(111,207,151,.25);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: .4rem;
+    }
+    .pfp-icon svg { width: 15px; height: 15px; color: #27ae60; }
+    .pfp-title { font-family: var(--font-head); font-size: .6rem; font-weight: 800; color: var(--d5-dark); margin-bottom: .15rem; }
+    .pfp-sub { font-size: .5rem; color: #6a8090; }
+
+    .phone-bg-glow {
+      position: absolute; top: 50%; right: -40px;
+      transform: translateY(-50%);
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(91,143,168,.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    @media (max-width: 900px) {
+      .platform-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .phone-mockup { margin: 0 auto; }
+    }
+
+    /* ══════════════════════════════════════
+       HOW IT WORKS
+    ══════════════════════════════════════ */
+    .how-it-works {
+      padding: 7rem 0;
+      background: var(--d5-dark);
+      position: relative; overflow: hidden;
+    }
+    /* faded chef photo on the right edge */
+    .how-it-works::after {
+      content: '';
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 45%; z-index: 0;
+      background-image: url('images/hero-kitchen.jpg');
+      background-size: cover; background-position: center top;
+      opacity: .14;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
+      mask-image: linear-gradient(90deg, transparent, #000 60%);
+    }
+    .how-it-works::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background-image: radial-gradient(circle, rgba(143,165,179,.1) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .how-head { text-align: center; margin-bottom: 5rem; position: relative; z-index: 1; }
+    .how-head .section-title { color: var(--d5-white); }
+    .how-head .section-subtitle { color: var(--d5-silver); margin: .75rem auto 0; }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2rem; position: relative; z-index: 1;
+    }
+    /* connecting line */
+    .steps-grid::before {
+      content: '';
+      position: absolute; top: 3.5rem; left: calc(100%/6); right: calc(100%/6);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(91,143,168,.4), rgba(91,143,168,.4), transparent);
+      pointer-events: none;
+    }
+    .step-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(143,165,179,.15);
+      border-radius: 20px; padding: 2.5rem 2rem;
+      text-align: center;
+      transition: border-color .3s, transform .3s, box-shadow .3s;
+    }
+    .step-card:hover {
+      border-color: rgba(91,143,168,.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.25), 0 0 0 1px rgba(91,143,168,.2);
+    }
+    .step-number {
+      font-family: var(--font-head);
+      font-size: 5rem; font-weight: 800; line-height: 1;
+      background: linear-gradient(135deg, rgba(91,143,168,.3), rgba(143,165,179,.15));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem; display: block;
+    }
+    .step-icon-ring {
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 1px solid rgba(91,143,168,.3);
+      background: rgba(91,143,168,.1);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+    .step-icon-ring svg { width: 26px; height: 26px; color: var(--d5-accent); }
+    .step-title {
+      font-family: var(--font-head); font-size: 1.1rem; font-weight: 700;
+      color: var(--d5-white); margin-bottom: .75rem;
+    }
+    .step-desc { font-size: .88rem; line-height: 1.65; color: var(--d5-silver); }
+
+    @media (max-width: 700px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .steps-grid::before { display: none; }
+    }
+
+    /* ══════════════════════════════════════
+       INDUSTRIES
+    ══════════════════════════════════════ */
+    .industries {
+      padding: 7rem 0;
+      background: #f5f8fa;
+    }
+    .industries-head {
+      margin-bottom: 3.5rem;
+      display: grid; grid-template-columns: 1.3fr 1fr;
+      gap: 3rem; align-items: center;
+    }
+    .industries-head-text { max-width: 46ch; }
+    .industries-photo {
+      position: relative; border-radius: 20px; overflow: hidden;
+      aspect-ratio: 16/10;
+      box-shadow: 0 24px 60px rgba(45,74,95,.18);
+    }
+    .industries-photo img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .industries-photo::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, transparent 50%, rgba(26,45,58,.35) 100%);
+    }
+    .industries-photo-badge {
+      position: absolute; bottom: 1rem; left: 1rem; z-index: 1;
+      display: flex; align-items: center; gap: .5rem;
+      background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+      border-radius: 10px; padding: .55rem .8rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    }
+    .industries-photo-badge svg { width: 18px; height: 18px; color: #27ae60; }
+    .industries-photo-badge-text { font-size: .72rem; font-weight: 600; color: var(--d5-dark); line-height: 1.3; }
+    .industries-photo-badge-text span { display: block; font-size: .62rem; font-weight: 400; color: #6a8090; }
+    @media (max-width: 800px) {
+      .industries-head { grid-template-columns: 1fr; gap: 2rem; }
+      .industries-photo { display: none; }
+    }
+    .industries-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+    }
+    .industry-card {
+      background: var(--d5-white); border: 1px solid rgba(45,74,95,.08);
+      border-radius: 14px; padding: 1.5rem 1rem; text-align: center;
+      transition: transform .3s var(--ease-smooth), box-shadow .3s, border-color .3s;
+      cursor: default;
+    }
+    .industry-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 16px 48px rgba(45,74,95,.1);
+      border-color: rgba(91,143,168,.3);
+    }
+    .industry-icon { display: flex; justify-content: center; margin-bottom: .85rem; }
+    .industry-icon svg { width: 34px; height: 34px; color: var(--d5-slate); stroke: var(--d5-slate); }
+    .industry-card:hover .industry-icon svg { color: var(--d5-accent); stroke: var(--d5-accent); transition: color .3s, stroke .3s; }
+    .industry-name {
+      font-family: var(--font-head); font-size: .8rem; font-weight: 700;
+      color: var(--d5-dark); line-height: 1.3;
+    }
+
+    @media (max-width: 1000px) { .industries-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .industries-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ══════════════════════════════════════
+       TESTIMONIALS
+    ══════════════════════════════════════ */
+    .testimonials {
+      padding: 7rem 0;
+      background: var(--d5-white);
+    }
+    .testimonials-head { text-align: center; margin-bottom: 4rem; }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .testimonial-card {
+      background: #f5f8fa;
+      border: 1px solid rgba(45,74,95,.07);
+      border-radius: 20px; padding: 2rem;
+      position: relative;
+      transition: transform .3s, box-shadow .3s, border-color .3s;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(45,74,95,.09);
+      border-color: rgba(91,143,168,.25);
+    }
+    .testimonial-card::before {
+      content: '\201C';
+      position: absolute; top: 1.2rem; right: 1.5rem;
+      font-family: Georgia, serif; font-size: 4rem;
+      line-height: 1; color: rgba(91,143,168,.2);
+      pointer-events: none;
+    }
+    .testimonial-stars {
+      display: flex; gap: .2rem; margin-bottom: 1rem;
+    }
+    .star { color: #f2c94c; font-size: .9rem; }
+    .testimonial-text {
+      font-size: .9rem; line-height: 1.7; color: #4a5f6e;
+      font-style: italic; margin-bottom: 1.25rem;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: .75rem; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--d5-slate), var(--d5-accent));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-size: .85rem; font-weight: 700;
+      color: white; flex-shrink: 0;
+    }
+    .author-name { font-weight: 600; font-size: .88rem; color: var(--d5-dark); }
+    .author-role { font-size: .75rem; color: var(--d5-silver); }
+
+    @media (max-width: 800px) { .testimonials-grid { grid-template-columns: 1fr; } }
+
+    /* ══════════════════════════════════════
+       CTA BANNER
+    ══════════════════════════════════════ */
+    .cta-banner {
+      padding: 7rem 0;
+      background: linear-gradient(135deg, #0d1f2b 0%, #1a2d3a 50%, #2d4a5f 100%);
+      position: relative; overflow: hidden; text-align: center;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(143,165,179,.1) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .cta-banner::after {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 300px; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(91,143,168,.15), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-banner h2 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800;
+      color: var(--d5-white); line-height: 1.15; margin-bottom: 1rem;
+    }
+    .cta-banner p {
+      font-size: 1.05rem; color: var(--d5-silver); margin-bottom: 2.5rem; max-width: 48ch; margin-left: auto; margin-right: auto;
+    }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: #0d1f2b;
+      border-top: 1px solid rgba(143,165,179,.1);
+      padding: 5rem 0 2.5rem;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 4rem;
+    }
+    .footer-brand-logo {
+      display: flex; align-items: center; gap: .7rem;
+      text-decoration: none; margin-bottom: 1rem;
+    }
+    .footer-brand-logo svg { width: 32px; height: 32px; }
+    .footer-brand-name {
+      font-family: var(--font-head); font-size: .95rem; font-weight: 700;
+      color: var(--d5-white);
+    }
+    .footer-brand-name span { display: block; font-size: .65rem; font-weight: 400; color: var(--d5-silver); }
+    .footer-tagline { font-size: .85rem; line-height: 1.6; color: var(--d5-silver); margin-bottom: 1.5rem; }
+    .footer-social { display: flex; gap: .6rem; }
+    .social-btn {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--d5-silver); font-size: .85rem; text-decoration: none;
+      transition: background .2s, color .2s;
+    }
+    .social-btn:hover { background: rgba(91,143,168,.2); color: var(--d5-white); }
+    .footer-col-title {
+      font-family: var(--font-head); font-size: .78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--d5-white); margin-bottom: 1.25rem;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: .6rem; list-style: none; }
+    .footer-links a {
+      font-size: .85rem; color: var(--d5-silver); text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--d5-white); }
+    .footer-bottom {
+      border-top: 1px solid rgba(143,165,179,.08);
+      padding-top: 2rem;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copy { font-size: .8rem; color: rgba(143,165,179,.5); }
+    .footer-legal { display: flex; gap: 1.5rem; }
+    .footer-legal a {
+      font-size: .8rem; color: rgba(143,165,179,.5); text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-legal a:hover { color: var(--d5-silver); }
+
+    @media (max-width: 900px) {
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+    @media (max-width: 500px) {
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <!-- Shield SVG matching D5 brand -->
+        <svg viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2L4 8V20C4 29.5 11 38.3 20 41C29 38.3 36 29.5 36 20V8L20 2Z" fill="#4a6b80" fill-opacity=".3" stroke="#8fa5b3" stroke-width="1.5"/>
+          <path d="M20 6L7 11V20C7 28.2 12.8 35.6 20 38C27.2 35.6 33 28.2 33 20V11L20 6Z" fill="#2d4a5f" fill-opacity=".6"/>
+          <circle cx="20" cy="17" r="4" fill="#c2cdd6"/>
+          <path d="M13 26C13 22.7 16.1 20 20 20s7 2.7 7 6" stroke="#c2cdd6" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="nav-logo-text">
+          D5 Safety Solutions
+          <span>Food Safety Compliance</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#platform">Platform</a></li>
+        <li><a href="#industries">Industries</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
+      <a href="#contact" class="nav-cta">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+        Book a Demo
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-overlay" id="overlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="menuClose">✕</button>
+  <a href="#services" class="mobile-link">Services</a>
+  <a href="#platform" class="mobile-link">Platform</a>
+  <a href="#industries" class="mobile-link">Industries</a>
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#resources" class="mobile-link">Resources</a>
+  <a href="#contact" class="mobile-link" style="color:var(--d5-accent)">Book a Demo →</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="home">
+  <div class="hero-photo"></div>
+  <div class="hero-line-accent"></div>
+  <div class="container">
+    <div class="hero-content">
+      <!-- Left -->
+      <div>
+        <div class="hero-eyebrow">UK's Leading Food Safety Platform</div>
+        <h1>
+          Complete Food Safety<br/>
+          Compliance.<br/>
+          <span class="gradient-text">Simplified.</span>
+        </h1>
+        <p class="hero-sub">
+          Digitise your HACCP plans, audits, temperature monitoring, staff training,
+          and allergen management in one powerful platform — backed by expert consultants.
+        </p>
+        <div class="hero-ctas">
+          <a href="#contact" class="btn-primary">
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+            Book a Free Audit
+          </a>
+          <a href="#platform" class="btn-outline">
+            Explore Platform
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+          </a>
+        </div>
+        <div class="hero-badges">
+          <span class="badge">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            HACCP Compliant
+          </span>
+          <span class="badge">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            ISO 22000 Aligned
+          </span>
+          <span class="badge">
+            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            5-Star Rating Ready
+          </span>
+        </div>
+      </div>
+      <!-- Right: Extended Dashboard -->
+      <div class="hero-visual">
+        <div class="dashboard-wrap">
+          <!-- Main App -->
+          <div class="dash-app">
+            <!-- Top bar -->
+            <div class="dash-topbar">
+              <div class="dash-topbar-brand">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                D5 Platform
+              </div>
+              <div class="dash-topbar-pill">
+                All Sites
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="dash-topbar-live">Live</div>
+            </div>
+
+            <!-- 3 module cards -->
+            <div class="dash-cards-row">
+              <!-- Checklists -->
+              <div class="dash-mod">
+                <div class="dash-mod-header">
+                  <span class="dash-mod-title">Checklists</span>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <div class="dash-count-row">
+                  <div class="dash-count-block">
+                    <span class="dash-big-num red">2</span>
+                    <div class="dash-count-label">Incomplete</div>
+                  </div>
+                  <div class="dash-count-block">
+                    <span class="dash-big-num green">17</span>
+                    <div class="dash-count-label">Complete</div>
+                  </div>
+                </div>
+                <div class="dash-mod-btns">
+                  <div class="dash-mod-btn">Download</div>
+                  <div class="dash-mod-btn">Search</div>
+                </div>
+              </div>
+
+              <!-- Hygiene Rating -->
+              <div class="dash-mod">
+                <div class="dash-mod-header">
+                  <span class="dash-mod-title">Enforcement Visit</span>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <div class="dash-hygiene-box">
+                  <div class="dash-hygiene-stars">★★★★★</div>
+                  <div class="dash-hygiene-num">5</div>
+                  <div class="dash-hygiene-label">Food Hygiene Rating</div>
+                </div>
+                <div class="dash-mod-btns">
+                  <div class="dash-mod-btn">Review audit</div>
+                  <div class="dash-mod-btn">Book audit</div>
+                </div>
+              </div>
+
+              <!-- Risk Assessment -->
+              <div class="dash-mod">
+                <div class="dash-mod-header">
+                  <span class="dash-mod-title">Risk Assessment</span>
+                </div>
+                <div class="dash-ring-wrap">
+                  <div class="dash-score-ring-sm">
+                    <div class="dash-score-ring-inner">
+                      <span class="dash-ring-num">95%</span>
+                      <span class="dash-ring-lbl">Compliant</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="dash-ring-legend">
+                  <span class="dash-leg g">Complete</span>
+                  <span class="dash-leg a">Pending</span>
+                  <span class="dash-leg r">Overdue</span>
+                </div>
+                <div class="dash-mod-btns">
+                  <div class="dash-mod-btn">View templates</div>
+                  <div class="dash-mod-btn">New</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom strip: Sites + Checks -->
+            <div class="dash-bottom-strip">
+              <!-- Sites performance -->
+              <div class="dash-panel">
+                <div class="dash-panel-title">Site Performance</div>
+                <div class="dash-sites-cols">
+                  <div>
+                    <div style="font-size:.44rem;color:rgba(255,255,255,.35);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.06em">Top Sites</div>
+                    <div class="dash-site-row">
+                      <span class="dash-site-rank g">1</span>
+                      <span class="dash-site-name">Bluewater</span>
+                      <div class="dash-site-bar-wrap"><div class="dash-site-bar" style="width:88%;background:#6fcf97"></div></div>
+                      <span class="dash-site-pct">88%</span>
+                    </div>
+                    <div class="dash-site-row">
+                      <span class="dash-site-rank g">2</span>
+                      <span class="dash-site-name">Edinburgh N.</span>
+                      <div class="dash-site-bar-wrap"><div class="dash-site-bar" style="width:86%;background:#6fcf97"></div></div>
+                      <span class="dash-site-pct">86%</span>
+                    </div>
+                    <div class="dash-site-row">
+                      <span class="dash-site-rank g">3</span>
+                      <span class="dash-site-name">Manchester</span>
+                      <div class="dash-site-bar-wrap"><div class="dash-site-bar" style="width:84%;background:#6fcf97"></div></div>
+                      <span class="dash-site-pct">84%</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-size:.44rem;color:rgba(255,255,255,.35);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.06em">Lowest</div>
+                    <div class="dash-site-row">
+                      <span class="dash-site-rank o">7</span>
+                      <span class="dash-site-name">Aberdeen</span>
+                      <div class="dash-site-bar-wrap"><div class="dash-site-bar" style="width:78%;background:#f2994a"></div></div>
+                      <span class="dash-site-pct">78%</span>
+                    </div>
+                    <div class="dash-site-row">
+                      <span class="dash-site-rank r">8</span>
+                      <span class="dash-site-name">Greenwich</span>
+                      <div class="dash-site-bar-wrap"><div class="dash-site-bar" style="width:70%;background:#eb5757"></div></div>
+                      <span class="dash-site-pct">70%</span>
+                    </div>
+                    <div class="dash-site-row">
+                      <span class="dash-site-rank r">9</span>
+                      <span class="dash-site-name">Bristol W.</span>
+                      <div class="dash-site-bar-wrap"><div class="dash-site-bar" style="width:65%;background:#eb5757"></div></div>
+                      <span class="dash-site-pct">65%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Today's checks -->
+              <div class="dash-panel">
+                <div class="dash-panel-title">Today's Checks</div>
+                <div class="dash-check-row">
+                  <div class="dash-ck-icon ok"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <span class="dash-ck-text">Opening checks complete</span>
+                </div>
+                <div class="dash-check-row">
+                  <div class="dash-ck-icon ok"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <span class="dash-ck-text">Fridge temps logged (7°C)</span>
+                </div>
+                <div class="dash-check-row">
+                  <div class="dash-ck-icon ok"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <span class="dash-ck-text">Allergen matrix updated</span>
+                </div>
+                <div class="dash-check-row">
+                  <div class="dash-ck-icon ok"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <span class="dash-ck-text">Staff training logged</span>
+                </div>
+                <div class="dash-check-row">
+                  <div class="dash-ck-icon pending"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                  <span class="dash-ck-text">Delivery check pending</span>
+                </div>
+                <div class="dash-check-row">
+                  <div class="dash-ck-icon warn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                  <span class="dash-ck-text">Pest log overdue</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating: Temperature checks -->
+          <div class="dash-float-temp">
+            <div class="dash-float-title">Temperature Checks</div>
+            <div class="dash-temp-row ok">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              <span class="td">13-10-23</span><span class="tv">3°C</span>
+            </div>
+            <div class="dash-temp-row hi">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              <span class="td">12-10-23</span><span class="tv">6°C !</span>
+            </div>
+            <div class="dash-temp-row ok">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              <span class="td">11-10-23</span><span class="tv">2°C</span>
+            </div>
+            <div class="dash-temp-row ok">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              <span class="td">10-10-23</span><span class="tv">2.5°C</span>
+            </div>
+          </div>
+
+          <!-- Floating: Allergen panel -->
+          <div class="dash-float-allergen">
+            <div class="dash-float-title">Allergen Management</div>
+            <div class="dash-allergen-row ok">
+              <span class="dash-allergen-name">Cereals / Gluten</span>
+              <span class="dash-allergen-count zero">0</span>
+            </div>
+            <div class="dash-allergen-row ok">
+              <span class="dash-allergen-name">Crustaceans</span>
+              <span class="dash-allergen-count zero">0</span>
+            </div>
+            <div class="dash-allergen-row warn">
+              <span class="dash-allergen-name">Celery</span>
+              <span class="dash-allergen-count alert">2</span>
+            </div>
+            <div class="dash-allergen-row ok">
+              <span class="dash-allergen-name">Tree Nuts</span>
+              <span class="dash-allergen-count zero">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS BAR ══ -->
+<section class="stats-bar" id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <span class="stat-number"><span class="count" data-target="10000">0</span><span class="stat-suffix">+</span></span>
+        <div class="stat-label">Checklists Monthly</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-1">
+        <span class="stat-number"><span class="count" data-target="98">0</span><span class="stat-suffix">%</span></span>
+        <div class="stat-label">Compliance Rate</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <span class="stat-number"><span class="count" data-target="500">0</span><span class="stat-suffix">+</span></span>
+        <div class="stat-label">Businesses Trusted</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <span class="stat-number">24<span class="stat-suffix">/7</span></span>
+        <div class="stat-label">Expert Support</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SERVICES ══ -->
+<section class="services" id="services">
+  <!-- Outlined watermark text -->
+  <div class="services-watermark" aria-hidden="true">SERVICES</div>
+  <!-- Food SVG decos -->
+  <div class="food-deco food-deco-1 spin-slow">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="50" cy="50" r="42"/><circle cx="50" cy="50" r="34"/>
+      <line x1="50" y1="16" x2="50" y2="84"/><line x1="16" y1="50" x2="84" y2="50"/>
+      <line x1="26" y1="26" x2="74" y2="74"/><line x1="74" y1="26" x2="26" y2="74"/>
+    </svg>
+  </div>
+  <div class="food-deco food-deco-2">
+    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 92V40"/><path d="M50 40c0-10 8-18 8-18s2 12-8 18z"/>
+      <path d="M50 52c-10 0-18-8-18-8s12-2 18 8z"/><path d="M50 52c10 0 18-8 18-8s-12-2-18 8z"/>
+      <path d="M50 66c-10 0-18-8-18-8s12-2 18 8z"/><path d="M50 66c10 0 18-8 18-8s-12-2-18 8z"/>
+      <path d="M50 80c-10 0-18-8-18-8s12-2 18 8z"/><path d="M50 80c10 0 18-8 18-8s-12-2-18 8z"/>
+    </svg>
+  </div>
+  <div class="container">
+    <!-- Header row: title left / blurb right -->
+    <div class="services-header reveal">
+      <div>
+        <div class="section-label">What We Offer</div>
+        <h2 class="section-title" style="margin-top:.5rem">Everything Your<br/>Food Business<br/><em>Needs</em></h2>
+      </div>
+      <div>
+        <p class="services-header-blurb">From on-site audits to digital HACCP systems — we cover every pillar of food safety compliance under one roof. Trusted by 500+ businesses across the UK.</p>
+        <div class="services-header-count">6 Core Services</div>
+      </div>
+    </div>
+
+    <!-- Editorial numbered list -->
+    <div class="services-list">
+
+      <a href="#contact" class="si reveal">
+        <span class="si-num">01</span>
+        <div class="si-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></div>
+        <h3 class="si-title">Food Safety Audits</h3>
+        <p class="si-desc">Comprehensive on-site and remote audits by certified consultants. Identify risks before they become incidents — with full corrective action tracking.</p>
+        <div class="si-arrow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+      </a>
+
+      <a href="#contact" class="si reveal reveal-delay-1">
+        <span class="si-num">02</span>
+        <div class="si-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></div>
+        <h3 class="si-title">HACCP &amp; Documentation</h3>
+        <p class="si-desc">Fully digital HACCP plans, policies, and procedures. Auto-timestamped, photo-evidenced, and export-ready as PDF in a single tap.</p>
+        <div class="si-arrow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+      </a>
+
+      <a href="#contact" class="si reveal reveal-delay-2">
+        <span class="si-num">03</span>
+        <div class="si-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+        <h3 class="si-title">Staff Training &amp; Certification</h3>
+        <p class="si-desc">Online and in-person food hygiene training. Track certificates, expiry dates, and onboarding progress for every team member across all sites.</p>
+        <div class="si-arrow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+      </a>
+
+      <a href="#contact" class="si reveal reveal-delay-3">
+        <span class="si-num">04</span>
+        <div class="si-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></div>
+        <h3 class="si-title">Temperature Monitoring</h3>
+        <p class="si-desc">Manual logging plus optional IoT sensor integration. Automated alerts fire instantly for any out-of-range readings — 24 hours a day, 7 days a week.</p>
+        <div class="si-arrow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+      </a>
+
+      <a href="#contact" class="si reveal reveal-delay-4">
+        <span class="si-num">05</span>
+        <div class="si-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3 class="si-title">Allergen Management</h3>
+        <p class="si-desc">Digital allergen matrices, menu management, and real-time updates. Full Natasha's Law compliance built in from day one — zero compromise.</p>
+        <div class="si-arrow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+      </a>
+
+      <a href="#contact" class="si reveal reveal-delay-5">
+        <span class="si-num">06</span>
+        <div class="si-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <h3 class="si-title">Compliance Consulting</h3>
+        <p class="si-desc">Dedicated food safety consultant support on demand. From EHO preparation to corrective action plans — we handle the complexity so you don't have to.</p>
+        <div class="si-arrow"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ APP PLATFORM ══ -->
+<section class="platform" id="platform">
+  <div class="container">
+    <div class="platform-inner">
+      <!-- Left text -->
+      <div>
+        <div class="section-label reveal">The Platform</div>
+        <h2 class="section-title reveal">One Platform.<br/><em>Total Compliance.</em></h2>
+        <p class="section-subtitle reveal">The D5 app brings every compliance module together — accessible on mobile and desktop, online or offline. Built for busy food business operators.</p>
+        <div class="platform-features">
+          <div class="platform-feature reveal reveal-delay-1">
+            <div class="feature-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="feature-text">
+              <strong>Digital HACCP & Checklists</strong>
+              <span>Editable, auto-timestamped, photo-upload ready. Generate PDF reports in one tap.</span>
+            </div>
+          </div>
+          <div class="platform-feature reveal reveal-delay-2">
+            <div class="feature-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="feature-text">
+              <strong>Real-Time Alerts & Notifications</strong>
+              <span>Push notifications for overdue checks, temperature excursions, and corrective actions.</span>
+            </div>
+          </div>
+          <div class="platform-feature reveal reveal-delay-3">
+            <div class="feature-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="feature-text">
+              <strong>Multi-Site Management</strong>
+              <span>Manage unlimited locations from one dashboard. Perfect for groups and franchises.</span>
+            </div>
+          </div>
+          <div class="platform-feature reveal reveal-delay-4">
+            <div class="feature-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="feature-text">
+              <strong>Offline Mode + Cloud Sync</strong>
+              <span>Works without internet. Data syncs automatically when connection is restored.</span>
+            </div>
+          </div>
+          <div class="platform-feature reveal reveal-delay-5">
+            <div class="feature-check"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="feature-text">
+              <strong>Analytics Dashboard</strong>
+              <span>Track compliance trends, audit scores, and non-conformity rates across all sites.</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:2rem" class="reveal">
+          <a href="#contact" class="btn-primary" style="background:var(--d5-slate);box-shadow:0 4px 20px rgba(45,74,95,.35)">
+            Request a Platform Demo
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+          </a>
+        </div>
+      </div>
+      <!-- Right: Rich Phone mockup -->
+      <div class="phone-mockup reveal">
+        <div class="phone-bg-glow"></div>
+
+        <!-- Floating: Alert card -->
+        <div class="phone-float-alert">
+          <div class="pfa-header">
+            <div class="pfa-dot"></div>
+            <div class="pfa-title">Temp Alert</div>
+          </div>
+          <div class="pfa-body">Fridge B exceeded 8°C at 12:34. Corrective action required.</div>
+          <div class="pfa-btn">View Action →</div>
+        </div>
+
+        <!-- Floating: Audit passed card -->
+        <div class="phone-float-pass">
+          <div class="pfp-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="pfp-title">Audit Passed</div>
+          <div class="pfp-sub">5-Star Rating<br/>Achieved Today</div>
+        </div>
+
+        <div class="phone-outer">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+
+            <!-- App top bar -->
+            <div class="papp-topbar">
+              <svg class="papp-shield" fill="none" stroke="#8fa5b3" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span class="papp-brand">D5 Platform</span>
+              <div class="papp-bell">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <div class="papp-bell-badge">2</div>
+              </div>
+            </div>
+
+            <!-- Greeting -->
+            <div class="papp-greeting">
+              <div class="papp-greeting-name">Good morning, Sarah</div>
+              <div class="papp-greeting-sub">
+                <div class="papp-online-dot"></div>
+                Thu 13 Oct · 14 modules active
+              </div>
+            </div>
+
+            <!-- Score + quick stats -->
+            <div class="papp-score-area">
+              <div class="papp-ring">
+                <div class="papp-ring-inner">
+                  <span class="papp-ring-num">98</span>
+                  <span class="papp-ring-lbl">Score</span>
+                </div>
+              </div>
+              <div class="papp-quick-stats">
+                <div class="papp-stat-pill ok">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span class="papp-stat-val">24</span>
+                  <span class="papp-stat-lbl">Checks complete</span>
+                </div>
+                <div class="papp-stat-pill warn">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span class="papp-stat-val">2</span>
+                  <span class="papp-stat-lbl">Actions pending</span>
+                </div>
+                <div class="papp-stat-pill alert">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span class="papp-stat-val">1</span>
+                  <span class="papp-stat-lbl">Alert active</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Priority checks -->
+            <div class="papp-section">
+              <div class="papp-section-title">Priority Checks</div>
+              <div class="papp-check-list">
+                <div class="papp-check-row">
+                  <div class="papp-ck-icon ok"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <span class="papp-ck-text">Opening checks</span>
+                  <span class="papp-ck-time">07:30</span>
+                </div>
+                <div class="papp-check-row">
+                  <div class="papp-ck-icon ok"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <span class="papp-ck-text">Allergen matrix updated</span>
+                  <span class="papp-ck-time">09:15</span>
+                </div>
+                <div class="papp-check-row">
+                  <div class="papp-ck-icon ok"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <span class="papp-ck-text">Staff training logged</span>
+                  <span class="papp-ck-time">10:00</span>
+                </div>
+                <div class="papp-check-row">
+                  <div class="papp-ck-icon due"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                  <span class="papp-ck-text">Delivery inspection</span>
+                  <span class="papp-ck-badge due">DUE 12:00</span>
+                </div>
+                <div class="papp-check-row">
+                  <div class="papp-ck-icon over"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                  <span class="papp-ck-text">Pest control log</span>
+                  <span class="papp-ck-badge over">OVERDUE</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Temperature log -->
+            <div class="papp-section" style="margin-top:.4rem">
+              <div class="papp-section-title">Temperature Log</div>
+              <div class="papp-temp-list">
+                <div class="papp-temp-row">
+                  <svg fill="none" stroke="#6fcf97" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                  <span class="papp-temp-label">Fridge A</span>
+                  <div class="papp-temp-bar-wrap"><div class="papp-temp-bar" style="width:30%;background:linear-gradient(90deg,#5b8fa8,#6fcf97)"></div></div>
+                  <span class="papp-temp-val papp-temp-ok">3°C</span>
+                </div>
+                <div class="papp-temp-row">
+                  <svg fill="none" stroke="#6fcf97" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                  <span class="papp-temp-label">Freezer B</span>
+                  <div class="papp-temp-bar-wrap"><div class="papp-temp-bar" style="width:10%;background:linear-gradient(90deg,#5b8fa8,#8fa5b3)"></div></div>
+                  <span class="papp-temp-val papp-temp-ok">−18°C</span>
+                </div>
+                <div class="papp-temp-row">
+                  <svg fill="none" stroke="#f2c94c" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                  <span class="papp-temp-label">Fridge B</span>
+                  <div class="papp-temp-bar-wrap"><div class="papp-temp-bar" style="width:80%;background:linear-gradient(90deg,#f2994a,#eb5757)"></div></div>
+                  <span class="papp-temp-val" style="color:#eb5757">8°C !</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="how-it-works" id="about">
+  <div class="container">
+    <div class="how-head">
+      <div class="section-label" style="color:var(--d5-silver)">Getting Started</div>
+      <h2 class="section-title">Up and running<br/>in three steps</h2>
+      <p class="section-subtitle">No complex setup. No IT team required. We configure everything for your business and have you compliant in days.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <span class="step-number">01</span>
+        <div class="step-icon-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.36 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.27-1.35a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <h3 class="step-title">Book a Consultation</h3>
+        <p class="step-desc">Speak with one of our certified food safety consultants. We'll assess your current setup, identify gaps, and recommend the right plan for your business.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <span class="step-number">02</span>
+        <div class="step-icon-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        <h3 class="step-title">Digitise Your Operations</h3>
+        <p class="step-desc">We configure the D5 platform for your business — custom checklists, HACCP plans, staff accounts, and site setup. You're ready to go in days, not months.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-4">
+        <span class="step-number">03</span>
+        <div class="step-icon-ring"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3 class="step-title">Stay Compliant 24/7</h3>
+        <p class="step-desc">Your team uses the app daily. Alerts flag issues in real time. Our consultants are available whenever you need expert guidance. Compliance becomes effortless.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ INDUSTRIES ══ -->
+<section class="industries" id="industries">
+  <div class="container">
+    <div class="industries-head reveal">
+      <div class="industries-head-text">
+        <div class="section-label">Industries We Serve</div>
+        <h2 class="section-title">Built for Every<br/><em>Food Environment</em></h2>
+        <p class="section-subtitle">Whether you run a single café or a national restaurant chain, D5 scales to meet your compliance needs.</p>
+      </div>
+      <div class="industries-photo">
+        <img src="images/restaurant.jpg" alt="Plated dish being served in a restaurant" loading="lazy" />
+        <div class="industries-photo-badge">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div class="industries-photo-badge-text">5-Star Hygiene<span>Compliance verified</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="industries-grid">
+      <div class="industry-card reveal">
+        <div class="industry-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></div>
+        <div class="industry-name">Restaurants &amp; Pubs</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-1">
+        <div class="industry-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22V12h6v10"/><path d="M8 7h.01M16 7h.01M12 7h.01M12 11h.01M16 11h.01M8 11h.01"/></svg></div>
+        <div class="industry-name">Hotels &amp; Hospitality</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-2">
+        <div class="industry-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <div class="industry-name">Schools &amp; Catering</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-3">
+        <div class="industry-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
+        <div class="industry-name">Food Manufacturers</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-4">
+        <div class="industry-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+        <div class="industry-name">Cafés &amp; Bakeries</div>
+      </div>
+      <div class="industry-card reveal reveal-delay-5">
+        <div class="industry-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8m-4-4h8"/></svg></div>
+        <div class="industry-name">Healthcare &amp; Care Homes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="testimonials" id="resources">
+  <div class="container">
+    <div class="testimonials-head reveal">
+      <div class="section-label">Client Stories</div>
+      <h2 class="section-title">Trusted by Food<br/><em>Businesses Across the UK</em></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testimonial-text">"D5 transformed how we manage food safety across our three sites. The digital checklists alone saved us hours every week, and we sailed through our EHO inspection with a 5-star rating."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SM</div>
+          <div>
+            <div class="author-name">Sarah Mitchell</div>
+            <div class="author-role">Operations Manager, The Harbour Group</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testimonial-text">"The allergen management module alone was worth it. With Natasha's Law, we needed to be on top of this — D5 made it simple and we've had zero incidents since going digital."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">JK</div>
+          <div>
+            <div class="author-name">James Kowalski</div>
+            <div class="author-role">Head Chef & Owner, Botanica Brasserie</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-4">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testimonial-text">"We were drowning in paper-based systems. D5 digitised everything in under a week. The consultant support is brilliant — they feel like part of our team, not just a software vendor."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RP</div>
+          <div>
+            <div class="author-name">Rachel Patel</div>
+            <div class="author-role">Food Safety Officer, Meridian Catering</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA BANNER ══ -->
+<section class="cta-banner" id="contact">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="reveal">
+        <div class="section-label" style="color:var(--d5-silver);justify-content:center">Get Started Today</div>
+      </div>
+      <h2 class="reveal">Ready to Transform Your<br/>Food Safety?</h2>
+      <p class="reveal">Book a free, no-obligation audit with one of our certified food safety consultants and see exactly where your business stands.</p>
+      <div class="cta-actions reveal">
+        <a href="mailto:hello@d5safetysolutions.com" class="btn-primary" style="font-size:1rem;padding:1rem 2rem">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+          Book a Free Audit
+        </a>
+        <a href="tel:+441234567890" class="btn-outline" style="font-size:1rem;padding:1rem 2rem">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.36 11a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l1.27-1.35a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Us Today
+        </a>
+      </div>
+      <p class="reveal" style="margin-top:1.5rem;font-size:.82rem;color:rgba(143,165,179,.6)">No commitment required · Response within 24 hours · UK-based team</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <!-- Brand -->
+      <div>
+        <a href="#" class="footer-brand-logo">
+          <svg viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+            <path d="M20 2L4 8V20C4 29.5 11 38.3 20 41C29 38.3 36 29.5 36 20V8L20 2Z" fill="#4a6b80" fill-opacity=".3" stroke="#8fa5b3" stroke-width="1.5"/>
+            <path d="M20 6L7 11V20C7 28.2 12.8 35.6 20 38C27.2 35.6 33 28.2 33 20V11L20 6Z" fill="#2d4a5f" fill-opacity=".6"/>
+            <circle cx="20" cy="17" r="4" fill="#c2cdd6"/>
+            <path d="M13 26C13 22.7 16.1 20 20 20s7 2.7 7 6" stroke="#c2cdd6" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <div class="footer-brand-name">D5 Safety Solutions<span>Food Safety Compliance</span></div>
+          </div>
+        </a>
+        <p class="footer-tagline">Making food safety compliance simple, digital, and stress-free for businesses across the UK.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+          <a href="#" class="social-btn" aria-label="Twitter">𝕏</a>
+          <a href="#" class="social-btn" aria-label="Facebook">f</a>
+          <a href="#" class="social-btn" aria-label="Instagram">◎</a>
+        </div>
+      </div>
+      <!-- Services col -->
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="#">Food Safety Audits</a></li>
+          <li><a href="#">HACCP & Documentation</a></li>
+          <li><a href="#">Staff Training</a></li>
+          <li><a href="#">Temperature Monitoring</a></li>
+          <li><a href="#">Allergen Management</a></li>
+          <li><a href="#">Compliance Consulting</a></li>
+        </ul>
+      </div>
+      <!-- Platform col -->
+      <div>
+        <div class="footer-col-title">Platform</div>
+        <ul class="footer-links">
+          <li><a href="#">Daily Checks App</a></li>
+          <li><a href="#">Audit Module</a></li>
+          <li><a href="#">Document Library</a></li>
+          <li><a href="#">Task Management</a></li>
+          <li><a href="#">Analytics Dashboard</a></li>
+          <li><a href="#">Multi-Site Portal</a></li>
+        </ul>
+      </div>
+      <!-- Company col -->
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Team</a></li>
+          <li><a href="#">Industries</a></li>
+          <li><a href="#">Blog & Resources</a></li>
+          <li><a href="#">Client Login</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 D5 Safety Solutions Ltd. All rights reserved. Registered in England & Wales.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Navbar scroll effect
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // ── Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const overlay    = document.getElementById('overlay');
+  const menuClose  = document.getElementById('menuClose');
+  const mobileLinks = document.querySelectorAll('.mobile-link');
+
+  function openMenu() {
+    mobileMenu.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    mobileMenu.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  hamburger.addEventListener('click', openMenu);
+  menuClose.addEventListener('click', closeMenu);
+  overlay.addEventListener('click', closeMenu);
+  mobileLinks.forEach(l => l.addEventListener('click', closeMenu));
+
+  // ── Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => revealObs.observe(el));
+
+  // ── Counter animation
+  function animateCount(el) {
+    const target = parseInt(el.dataset.target);
+    const duration = 1800;
+    const start = performance.now();
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out expo
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const current = Math.round(ease * target);
+      el.textContent = current >= 1000
+        ? (current / 1000).toFixed(current % 1000 === 0 ? 0 : 1) + 'k'
+        : current;
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target >= 1000
+        ? (target / 1000).toFixed(0) + 'k'
+        : target;
+    }
+    requestAnimationFrame(step);
+  }
+
+  const counters = document.querySelectorAll('.count');
+  const counterObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCount(e.target);
+        counterObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => counterObs.observe(c));
+
+  // ── Smooth active nav highlighting on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? 'var(--d5-white)' : '';
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
